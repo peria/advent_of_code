@@ -1,4 +1,4 @@
-use std::{collections::BTreeSet, io::Read};
+use std::io::Read;
 
 fn main() {
     let mut buf = String::new();
@@ -31,17 +31,16 @@ fn solve1(towels: &Vec<String>, designs: &Vec<String>) -> i64 {
 
 fn count_ways(towels: &Vec<String>, design: &str) -> usize {
     let mut dp = vec![0; design.len() + 1];
-    let mut q = BTreeSet::new();
-    q.insert(0);
     dp[0] = 1;
-    while !q.is_empty() {
-        let s = q.pop_first().unwrap();
-        let des = &design[s..];
+    for i in 0..design.len() {
+        if dp[i] == 0 {
+            continue;
+        }
+        let des = &design[i..];
         for towel in towels.iter() {
             if des.starts_with(towel) {
-                let next = s + towel.len();
-                dp[next] += dp[s];
-                q.insert(next);
+                let next = i + towel.len();
+                dp[next] += dp[i];
             }
         }
     }
