@@ -55,29 +55,37 @@ fn solve2(data: &Vec<Vec<char>>) -> i64 {
     let (num_lines, operation_line) = (&data[..n], &data[n]);
 
     let mut total = 0i64;
-    let mut nums = vec![0i64; n];
+    let mut nums = Vec::new();
     for i in (0..(data[0].len())).rev() {
-        for (l, val) in num_lines.iter().zip(nums.iter_mut()) {
+        let mut num = 0;
+        let mut is_value = false;
+        for l in num_lines.iter() {
             let c = l[i];
             if c == ' ' {
                 continue;
             }
-            *val = *val * 10 + (c as u8 - b'0') as i64;
+            is_value = true;
+            num = num * 10 + (c as u8 - b'0') as i64;
         }
-        if operation_line[i] == ' ' {
+        if is_value {
+            nums.push(num);
+        } else {
+            nums.clear();
             continue;
         }
 
         let operator = operation_line[i];
+        if operator == ' ' {
+            continue;
+        }
+
         let line_total: i64 = match operator {
             '+' => nums.iter().sum(),
             '*' => nums.iter().product(),
             _ => 0,
         };
+        eprintln!("{:?} {} {}", &nums, operator, line_total);
         total += line_total;
-        for val in nums.iter_mut() {
-            *val = 0;
-        }
     }
     total
 }
@@ -86,10 +94,10 @@ fn solve2(data: &Vec<Vec<char>>) -> i64 {
 mod test {
     use super::*;
 
-    const SAMPLE_INPUT: &str = r"123 328  51 64
- 45 64  387 23
+    const SAMPLE_INPUT: &str = r"123 328  51 64 
+ 45 64  387 23 
   6 98  215 314
-*   +   *   + ";
+*   +   *   +  ";
 
     #[test]
     fn test_solve1() {
